@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>Foil Paddle-Up Trainer</title>
+<style>
+*{box-sizing:border-box}
+:root{--bg:#ffffff;--panel:#f4f3ee;--text:#1f1e1c;--text2:#6b6a64;--border:#d9d7cf;--accent:#D85A30;--danger:#C0392B;--good:#4E7A27;--teal:#1D9E75}
+@media (prefers-color-scheme:dark){:root{--bg:#1a1a18;--panel:#262522;--text:#ECEAE3;--text2:#A8A69E;--border:#3a3a36;--accent:#E8754F;--danger:#E2706A;--good:#9CC56A;--teal:#39B98C}}
+html,body{margin:0}
+body{background:var(--bg);color:var(--text);font-family:-apple-system,system-ui,Segoe UI,Roboto,sans-serif;-webkit-text-size-adjust:100%;touch-action:manipulation}
+.wrap{max-width:640px;margin:0 auto;padding:14px}
+h1{font-size:18px;margin:2px 0 4px}
+.sub{font-size:12px;color:var(--text2);margin:0 0 12px}
+.tabs{display:flex;gap:8px;margin-bottom:12px}
+.tab{flex:1;padding:10px;border:1px solid var(--border);border-radius:10px;background:var(--panel);color:var(--text2);font-size:13px;font-weight:600}
+.tab.on{border-color:var(--accent);color:var(--text)}
+.view svg{width:100%;height:auto;display:block;background:var(--bg);border:1px solid var(--border);border-radius:12px}
+.ctl{display:flex;align-items:center;gap:10px;margin:10px 2px;font-size:13px;color:var(--text2)}
+.ctl label{min-width:112px}
+.ctl input[type=range]{flex:1;height:30px;accent-color:var(--accent)}
+.ctl .val{min-width:66px;text-align:right;color:var(--text)}
+.wbtn{padding:6px 16px;border:1px solid var(--border);border-radius:9px;background:var(--panel);color:var(--text2);font-size:13px;margin-right:6px}
+.wbtn.on{border-color:var(--accent);color:var(--text)}
+.ts{fill:var(--text2);font:11px -apple-system,system-ui,sans-serif}
+.th{fill:var(--text);font:600 12px -apple-system,system-ui,sans-serif}
+.leader{stroke:var(--border);stroke-width:1;stroke-dasharray:3 3;fill:none}
+b{font-weight:600}
+@keyframes drift{0%{transform:translate(0,0);opacity:.5}50%{opacity:1}100%{transform:translate(7px,6px);opacity:.5}}
+@keyframes swell{from{transform:translateY(0)}to{transform:translateY(52px)}}
+@media (prefers-reduced-motion:no-preference){#faceFlow{animation:drift 1.6s ease-in-out infinite}#crests{animation:swell 3.2s linear infinite}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<h1>Foil paddle-up trainer</h1>
+<p class="sub">Two views of the same takeoff. Side = the vertical timing. Top = the line across the wave.</p>
+<div class="tabs">
+<button id="tabSide" class="tab on" type="button">Paddle-up · side</button>
+<button id="tabTop" class="tab" type="button">Takeoff angle · top</button>
+</div>
+
+<section id="viewSide" class="view">
+<svg id="svgSide" viewBox="0 0 680 340" xmlns="http://www.w3.org/2000/svg">
+<defs>
+<marker id="arr1" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker>
+</defs>
+<path id="waterFill" d="M20 236.0 L28 233.6 L36 230.8 L44 227.6 L52 224.1 L60 220.3 L68 216.2 L76 212.1 L84 207.9 L92 203.8 L100 199.7 L108 195.9 L116 192.4 L124 189.2 L132 186.4 L140 184.0 L148 182.2 L156 180.9 L164 180.2 L172 180.0 L180 180.5 L188 181.5 L196 183.0 L204 185.1 L212 187.7 L220 190.7 L228 194.1 L236 197.8 L244 201.7 L252 205.8 L260 210.0 L268 214.2 L276 218.3 L284 222.2 L292 225.9 L300 229.3 L308 232.3 L316 234.9 L324 237.0 L332 238.5 L340 239.5 L348 240.0 L356 239.8 L364 239.1 L372 237.8 L380 236.0 L388 233.6 L396 230.8 L404 227.6 L412 224.1 L420 220.3 L428 216.2 L436 212.1 L444 207.9 L452 203.8 L460 199.7 L468 195.9 L476 192.4 L484 189.2 L492 186.4 L500 184.0 L508 182.2 L516 180.9 L524 180.2 L532 180.0 L540 180.5 L548 181.5 L556 183.0 L564 185.1 L572 187.7 L580 190.7 L580 332 L20 332 Z" fill="#378ADD" opacity="0.18"/>
+<rect id="band" x="210" y="96" width="95" height="158" fill="#97C459" opacity="0.16"/>
+<path id="waveLine" d="M20 236.0 L28 233.6 L36 230.8 L44 227.6 L52 224.1 L60 220.3 L68 216.2 L76 212.1 L84 207.9 L92 203.8 L100 199.7 L108 195.9 L116 192.4 L124 189.2 L132 186.4 L140 184.0 L148 182.2 L156 180.9 L164 180.2 L172 180.0 L180 180.5 L188 181.5 L196 183.0 L204 185.1 L212 187.7 L220 190.7 L228 194.1 L236 197.8 L244 201.7 L252 205.8 L260 210.0 L268 214.2 L276 218.3 L284 222.2 L292 225.9 L300 229.3 L308 232.3 L316 234.9 L324 237.0 L332 238.5 L340 239.5 L348 240.0 L356 239.8 L364 239.1 L372 237.8 L380 236.0 L388 233.6 L396 230.8 L404 227.6 L412 224.1 L420 220.3 L428 216.2 L436 212.1 L444 207.9 L452 203.8 L460 199.7 L468 195.9 L476 192.4 L484 189.2 L492 186.4 L500 184.0 L508 182.2 L516 180.9 L524 180.2 L532 180.0 L540 180.5 L548 181.5 L556 183.0 L564 185.1 L572 187.7 L580 190.7" fill="none" stroke="#185FA5" stroke-width="1.5"/>
+<g id="faceFlow">
+<line x1="218" y1="176" x2="236" y2="190" stroke="#185FA5" stroke-width="1.5" marker-end="url(#arr1)"/>
+<line x1="252" y1="196" x2="270" y2="212" stroke="#185FA5" stroke-width="1.5" marker-end="url(#arr1)"/>
+<line x1="286" y1="216" x2="304" y2="232" stroke="#185FA5" stroke-width="1.5" marker-end="url(#arr1)"/>
+</g>
+<ellipse id="glow" cx="0" cy="0" rx="48" ry="11" fill="#1D9E75" opacity="0"/>
+<g id="rig" transform="translate(180,200)">
+<line id="mastLine" x1="4" y1="5" x2="4" y2="40" stroke="#0F6E56" stroke-width="2.5"/>
+<ellipse id="foilWing" cx="4" cy="42" rx="20" ry="3.2" fill="#1D9E75" stroke="#0F6E56" stroke-width="0.5"/>
+<rect x="-38" y="-5" width="76" height="10" rx="5" fill="#B4B2A9" stroke="#5F5E5A" stroke-width="0.5"/>
+</g>
+<line id="liftArrow" x1="0" y1="0" x2="0" y2="0" stroke="#D85A30" stroke-width="3" marker-end="url(#arr1)"/>
+<text id="badge" class="th" x="0" y="0" text-anchor="middle" fill="#1D9E75" style="display:none">FOILING</text>
+<rect x="606" y="72" width="24" height="168" rx="5" fill="var(--panel)" stroke="var(--border)" stroke-width="0.5"/>
+<rect id="gfill" x="606" y="240" width="24" height="0" rx="5" fill="#EF9F27"/>
+<line x1="600" y1="147" x2="636" y2="147" stroke="#993C1D" stroke-width="1.5" stroke-dasharray="4 3"/>
+<text class="ts" x="618" y="64" text-anchor="middle">lift</text>
+<text class="ts" x="600" y="151" text-anchor="end">takeoff</text>
+<text class="ts" x="252" y="90" text-anchor="middle">drop-in window</text>
+<text class="ts" x="455" y="90" text-anchor="middle">back of wave, no assist</text>
+</svg>
+<div class="ctl"><label>position on wave</label><input type="range" id="pos" min="0" max="100" value="20"><span class="val" id="posV">back face</span></div>
+<div class="ctl"><label>paddle effort</label><input type="range" id="pad" min="0" max="10" value="4"><span class="val" id="padV">4</span></div>
+<div class="ctl"><label>nose-up load</label><input type="range" id="aoa" min="0" max="16" value="6"><span class="val" id="aoaV">6&deg;</span></div>
+<div class="ctl"><label>mast position</label><input type="range" id="mast" min="0" max="100" value="70"><span class="val" id="mastV">aft</span></div>
+<div class="ctl"><label></label><span id="mastNote" style="color:var(--text2)">Aft mast: more glide, later and pitchier takeoff, needs more speed.</span></div>
+<div class="ctl"><label>front wing</label><span><button class="wbtn" id="w1350" type="button">1350</button><button class="wbtn on" id="w1880" type="button">1880</button><button class="wbtn" id="wUHA" type="button">UHA970</button></span></div>
+<div class="ctl"><label></label><span id="wingNote" style="color:var(--text2)">APF 1880: most low-end lift, earliest takeoff, your easy paddle-up wing.</span></div>
+<div class="ctl"><label>result</label><span style="color:var(--text)">speed <b id="spd">5.5</b> &middot; lift <b id="lift">0.40</b> &middot; <b id="pct">40%</b> of takeoff</span></div>
+<div class="ctl"><label></label><span id="status" style="color:var(--text2);font-weight:600">paddling, low speed</span></div>
+</section>
+
+<section id="viewTop" class="view" style="display:none">
+<svg id="svgTop" viewBox="0 0 680 330" xmlns="http://www.w3.org/2000/svg">
+<defs>
+<marker id="arr2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker>
+</defs>
+<rect x="0" y="0" width="680" height="330" fill="#378ADD" opacity="0.08"/>
+<g id="crests">
+<line x1="20" y1="-32" x2="660" y2="-32" stroke="#378ADD" stroke-width="2" opacity="0.5"/>
+<line x1="20" y1="20" x2="660" y2="20" stroke="#378ADD" stroke-width="2" opacity="0.5"/>
+<line x1="20" y1="72" x2="660" y2="72" stroke="#378ADD" stroke-width="2" opacity="0.5"/>
+<line x1="20" y1="124" x2="660" y2="124" stroke="#378ADD" stroke-width="2" opacity="0.5"/>
+<line x1="20" y1="176" x2="660" y2="176" stroke="#378ADD" stroke-width="2" opacity="0.5"/>
+<line x1="20" y1="228" x2="660" y2="228" stroke="#378ADD" stroke-width="2" opacity="0.5"/>
+<line x1="20" y1="280" x2="660" y2="280" stroke="#378ADD" stroke-width="2" opacity="0.5"/>
+<line x1="20" y1="332" x2="660" y2="332" stroke="#378ADD" stroke-width="2" opacity="0.5"/>
+<line x1="20" y1="384" x2="660" y2="384" stroke="#378ADD" stroke-width="2" opacity="0.5"/>
+</g>
+<line x1="120" y1="150" x2="560" y2="150" stroke="#185FA5" stroke-width="2.5"/>
+<text class="ts" x="124" y="143">crest you are on</text>
+<text class="ts" x="30" y="40">swell direction</text>
+<line x1="40" y1="48" x2="40" y2="96" stroke="#888780" stroke-width="1.5" marker-end="url(#arr2)"/>
+<line id="zoneA" x1="330" y1="150" x2="0" y2="0" stroke="#5C8A2E" stroke-width="1.2" stroke-dasharray="5 4" opacity="0.85"/>
+<line id="zoneB" x1="330" y1="150" x2="0" y2="0" stroke="#5C8A2E" stroke-width="1.2" stroke-dasharray="5 4" opacity="0.85"/>
+<text class="ts" x="452" y="252" fill="var(--good)">good line zone</text>
+<line id="fall" x1="330" y1="150" x2="330" y2="258" stroke="#888780" stroke-width="1.5" stroke-dasharray="4 3" marker-end="url(#arr2)"/>
+<text class="ts" x="336" y="250">fall line</text>
+<line id="head" x1="330" y1="150" x2="396" y2="244" stroke="#D85A30" stroke-width="2.5" marker-end="url(#arr2)"/>
+<g id="board" transform="translate(330,150) rotate(55)">
+<path d="M-35 0 Q-30 -8 0 -8 Q25 -8 35 0 Q25 8 0 8 Q-30 8 -35 0 Z" fill="#B4B2A9" stroke="#5F5E5A" stroke-width="0.6"/>
+</g>
+<circle cx="330" cy="150" r="3" fill="#5F5E5A"/>
+<text id="angLabel" class="th" x="351" y="221">&#952; = 35&deg;</text>
+</svg>
+<div class="ctl"><label>takeoff angle</label><input type="range" id="ang" min="0" max="85" value="35"><span class="val" id="angV">35&deg;</span></div>
+<div class="ctl"><label>down-wave drive</label><span style="color:var(--text)"><b id="drive">82%</b> &middot; across face <b id="cross">57%</b></span></div>
+<div class="ctl"><label>verdict</label><span id="verdict" style="color:var(--text2);font-weight:600">good takeoff line</span></div>
+</section>
+</div>
+
+<script>
+(function(){
+  var A=30,baseY=210,xc=170,k=2*Math.PI/360,wingKey='1880';
+  var WING={'1350':{f:0.74,n:'APF 1350: smaller, faster and looser, needs the most speed to lift.'},'1880':{f:1.00,n:'APF 1880: most low-end lift, earliest takeoff, your easy paddle-up wing.'},'uha':{f:0.80,n:'UHA 970: ultra high aspect, lifts earlier than its size suggests and glides and pumps best, but less raw low-end punch than the 1880.'}};
+  function yS(x){return baseY-A*Math.cos(k*(x-xc));}
+  function slope(x){return A*k*Math.sin(k*(x-xc));}
+  function clOf(a){return a<=13?a/13:Math.max(0.1,0.55-(a-13)*0.12);}
+  function g(id){return document.getElementById(id);}
+  var d='M20 '+yS(20).toFixed(1);
+  for(var x=28;x<=580;x+=8)d+=' L'+x+' '+yS(x).toFixed(1);
+  g('waveLine').setAttribute('d',d);
+  g('waterFill').setAttribute('d',d+' L580 332 L20 332 Z');
+  function upd(){
+    var pos=+g('pos').value,pad=+g('pad').value,a=+g('aoa').value,mast=+g('mast').value;
+    var fwd=(50-mast)/50,mastFactor=1+fwd*0.18,mastX=18-(mast/100)*36;
+    var xb=40+pos/100*480,surf=yS(xb),slp=slope(xb),waveTilt=Math.atan(slp)*180/Math.PI;
+    var assist=Math.max(0,slp)*11.5,speed=pad+assist;
+    var cl=clOf(a),liftRel=cl*Math.pow(speed/6,2)*WING[wingKey].f*mastFactor,thr=1.0,flying=liftRel>=thr,stalled=a>13;
+    var gap=flying?Math.min(30,(liftRel-thr)*45+6):0,cy=surf-5-gap;
+    var rigTilt=waveTilt-a*0.45-(flying?Math.max(0,-fwd)*6:0);
+    g('mastLine').setAttribute('x1',mastX.toFixed(1));g('mastLine').setAttribute('x2',mastX.toFixed(1));
+    g('foilWing').setAttribute('cx',mastX.toFixed(1));
+    g('rig').setAttribute('transform','translate('+xb.toFixed(1)+','+cy.toFixed(1)+') rotate('+rigTilt.toFixed(1)+')');
+    var llen=Math.min(46,liftRel*26),ty=cy-7-llen,la=g('liftArrow');
+    la.setAttribute('x1',xb);la.setAttribute('x2',xb);la.setAttribute('y1',(cy-7).toFixed(1));la.setAttribute('y2',ty.toFixed(1));
+    var gl=g('glow');gl.setAttribute('cx',xb);gl.setAttribute('cy',(cy+7).toFixed(1));gl.setAttribute('opacity',flying?0.28:0);
+    var bd=g('badge');if(flying){bd.style.display='block';bd.setAttribute('x',xb);bd.setAttribute('y',(ty-6).toFixed(1));}else{bd.style.display='none';}
+    var frac=Math.min(1,liftRel/1.8),fh=168*frac,gf=g('gfill');
+    gf.setAttribute('y',(240-fh).toFixed(1));gf.setAttribute('height',fh.toFixed(1));gf.setAttribute('fill',flying?'#1D9E75':'#EF9F27');
+    g('band').setAttribute('opacity',assist>2?0.30:0.16);
+    g('posV').textContent=slp<-0.05?'back face':(assist>1?'on face':'near crest');
+    g('padV').textContent=pad;g('aoaV').textContent=a+'\u00B0';
+    g('spd').textContent=speed.toFixed(1);g('lift').textContent=liftRel.toFixed(2);g('pct').textContent=Math.round(liftRel/thr*100)+'%';
+    var st,sc;
+    var pitchy=flying&&mast>66&&(liftRel>1.4||a>10);
+    if(pitchy){st='up, but the aft mast is pitchy, ease weight forward';sc='var(--accent)';}
+    else if(flying){st='up and foiling';sc='var(--teal)';}
+    else if(stalled){st='angle stalled, lift dumped';sc='var(--danger)';}
+    else if(assist>1.5){st='on the face, lift building';sc='var(--text2)';}
+    else if(slp<-0.1){st='climbing the back, no assist';sc='var(--text2)';}
+    else {st='paddling, low speed';sc='var(--text2)';}
+    var se=g('status');se.textContent=st;se.style.color=sc;
+    g('mastV').textContent=mast<34?'forward':(mast>66?'aft':'centre');
+    g('mastNote').textContent=mast<34?'Forward mast: lifts earliest and calmest, but less glide.':(mast>66?'Aft mast: more glide, later and pitchier takeoff, needs more speed and a firm move forward once up.':'Centre mast: balanced, a good middle ground.');
+  }
+  ['pos','pad','aoa','mast'].forEach(function(id){g(id).addEventListener('input',upd);});
+  function setWing(key){wingKey=key;g('w1350').classList.toggle('on',key==='1350');g('w1880').classList.toggle('on',key==='1880');g('wUHA').classList.toggle('on',key==='uha');g('wingNote').textContent=WING[key].n;upd();}
+  g('w1350').addEventListener('click',function(){setWing('1350');});
+  g('w1880').addEventListener('click',function(){setWing('1880');});
+  g('wUHA').addEventListener('click',function(){setWing('uha');});
+  upd();
+})();
+
+(function(){
+  function g(id){return document.getElementById(id);}
+  var ox=330,oy=150,R=120;
+  function ptat(th,r){var rad=th*Math.PI/180;return [ox+r*Math.sin(rad),oy+r*Math.cos(rad)];}
+  g('zoneA').setAttribute('x2',ptat(25,135)[0].toFixed(1));g('zoneA').setAttribute('y2',ptat(25,135)[1].toFixed(1));
+  g('zoneB').setAttribute('x2',ptat(55,135)[0].toFixed(1));g('zoneB').setAttribute('y2',ptat(55,135)[1].toFixed(1));
+  function upd(){
+    var th=+g('ang').value,rad=th*Math.PI/180;
+    var hx=ox+R*Math.sin(rad),hy=oy+R*Math.cos(rad);
+    g('head').setAttribute('x2',hx.toFixed(1));g('head').setAttribute('y2',hy.toFixed(1));
+    var deg=Math.atan2(Math.cos(rad),Math.sin(rad))*180/Math.PI;
+    g('board').setAttribute('transform','translate('+ox+','+oy+') rotate('+deg.toFixed(1)+')');
+    var lp=ptat(th/2,66);g('angLabel').setAttribute('x',lp[0].toFixed(1));g('angLabel').setAttribute('y',lp[1].toFixed(1));
+    g('angLabel').textContent='\u03B8 = '+th+'\u00B0';
+    g('angV').textContent=th+'\u00B0';
+    g('drive').textContent=Math.round(Math.cos(rad)*100)+'%';
+    g('cross').textContent=Math.round(Math.sin(rad)*100)+'%';
+    var v,c;
+    if(th<15){v='too straight, you bury the nose';c='var(--danger)';}
+    else if(th<25){v='steep and fast, hard to hold';c='var(--text2)';}
+    else if(th<=55){v='good takeoff line, speed builds';c='var(--good)';}
+    else if(th<=70){v='shallow, losing down-wave drive';c='var(--text2)';}
+    else{v='too along the crest, wave passes under';c='var(--danger)';}
+    var ve=g('verdict');ve.textContent=v;ve.style.color=c;
+  }
+  g('ang').addEventListener('input',upd);
+  upd();
+})();
+
+(function(){
+  function g(id){return document.getElementById(id);}
+  function show(side){
+    g('viewSide').style.display=side?'block':'none';
+    g('viewTop').style.display=side?'none':'block';
+    g('tabSide').classList.toggle('on',side);
+    g('tabTop').classList.toggle('on',!side);
+  }
+  g('tabSide').addEventListener('click',function(){show(true);});
+  g('tabTop').addEventListener('click',function(){show(false);});
+})();
+</script>
+</body>
+</html>
